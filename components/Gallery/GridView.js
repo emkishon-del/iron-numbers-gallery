@@ -10,10 +10,17 @@ export default function GridView({ images = [] }) {
   if (images.length === 0) return null;
 
   const totalPages = Math.ceil(images.length / PAGE_SIZE);
-  const start = page * PAGE_SIZE;
-  const visibleImages = Array.from({ length: PAGE_SIZE }, (_, index) => {
-    return images[(start + index) % images.length];
-  });
+const start = page * PAGE_SIZE;
+const end = start + PAGE_SIZE;
+
+let visibleImages = images.slice(start, end);
+
+if (visibleImages.length < PAGE_SIZE) {
+  const missing = PAGE_SIZE - visibleImages.length;
+  const previousImages = images.slice(start - missing, start);
+
+  visibleImages = [...previousImages, ...visibleImages];
+}
   const goNextPage = () => {
     setPage((prev) => Math.min(prev + 1, totalPages - 1));
   };

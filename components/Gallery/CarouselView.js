@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import GalleryImage from './GalleryImage';
+import styles from './Gallery.module.css';
 
 export default function CarouselView({ images = [] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,12 +20,12 @@ export default function CarouselView({ images = [] }) {
   const hasMultiple = images.length > 1;
 
   return (
-    <div className="ing-carousel" dir="rtl">
-      <button className="ing-arrow" onClick={goPrev} aria-label="תמונה קודמת" disabled={!hasMultiple}>
+    <div className={styles['ing-carousel']} dir="rtl">
+      <button className={styles['ing-arrow']} onClick={goPrev} aria-label="תמונה קודמת" disabled={!hasMultiple}>
         ‹
       </button>
 
-      <div className="ing-track">
+      <div className={styles['ing-track']}>
         {hasMultiple && (
           <GalleryImage image={images[prevIndex]} size="side" onClick={() => setCurrentIndex(prevIndex)} />
         )}
@@ -36,7 +37,7 @@ export default function CarouselView({ images = [] }) {
         )}
       </div>
 
-      <button className="ing-arrow" onClick={goNext} aria-label="תמונה הבאה" disabled={!hasMultiple}>
+      <button className={styles['ing-arrow']} onClick={goNext} aria-label="תמונה הבאה" disabled={!hasMultiple}>
         ›
       </button>
     </div>

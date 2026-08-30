@@ -2,12 +2,13 @@ import { useState } from 'react';
 import GalleryToolbar from './GalleryToolbar';
 import CarouselView from './CarouselView';
 import GridView from './GridView';
+import styles from './Gallery.module.css';
 
 export default function Gallery({ images = [] }) {
   const [viewMode, setViewMode] = useState('carousel'); // 'carousel' | 'grid'
 
   return (
-    <div className="ing-gallery">
+    <div className={styles['ing-gallery']}>
       <GalleryToolbar
         viewMode={viewMode}
         onViewModeChange={setViewMode}

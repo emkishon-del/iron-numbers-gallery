@@ -1,3 +1,4 @@
+import styles from './Gallery.module.css';
 export const mockImages = Array.from({ length: 12 }).map((_, i) => ({
   id: String(i + 1),
   url: `https://picsum.photos/seed/iron-number-${i + 1}/800/600`,

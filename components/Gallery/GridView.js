@@ -4,7 +4,7 @@ import styles from './Gallery.module.css';
 
 const PAGE_SIZE = 6;
 
-export default function GridView({ images = [] }) {
+export default function GridView({ images = [], onImageClick }) {
   const [page, setPage] = useState(0);
 
   if (images.length === 0) return null;
@@ -33,7 +33,9 @@ if (visibleImages.length < PAGE_SIZE) {
     <div>
       <div className={styles['ing-grid']} dir="rtl">
         {visibleImages.map((image) => (
-          <GalleryImage key={image.id} image={image} size="grid" />
+          <GalleryImage key={image.id} image={image} size="grid"     
+          onClick={() => onImageClick(image.id)}
+/>
         ))}
       </div>
 

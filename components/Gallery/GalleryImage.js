@@ -26,6 +26,8 @@ export default function GalleryImage({ image, size, onClick }) {
   return (
     <div className={`${styles['ing-image-wrapper']} ${sizeClass}`} onClick={onClick}>
       {!loaded && <div className={styles['ing-skeleton']} />}
+      {
+console.log('image.url:', image.url)}
       <img
         src={image.url}
         alt={image.alt || image.name || ''}
@@ -34,9 +36,7 @@ export default function GalleryImage({ image, size, onClick }) {
         onLoad={() => setLoaded(true)}
         onError={() => setFailed(true)}
       />
-      {size === 'grid' && image.name && (
-        <div className={styles['ing-grid-caption']}>{image.name}</div>
-      )}
+    
     </div>
   );
 }

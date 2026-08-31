@@ -1,7 +1,7 @@
 import styles from './Gallery.module.css';
-export const mockImages = Array.from({ length: 12 }).map((_, i) => ({
+export const mockImages = Array.from({ length: 6 }).map((_, i) => ({
   id: String(i + 1),
-  url: `https://picsum.photos/seed/iron-number-${i + 1}/800/600`,
-  name: i % 3 === 0 ? `מספר ברזל ${i + 1}` : '',
+  url: `/pic/m${11+i}.jpg`,
+  name:'',
   alt: `תמונה מספר ${i + 1}`,
 }));

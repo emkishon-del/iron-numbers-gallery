@@ -73,6 +73,7 @@
     align-items: center;
     justify-content: center;
     gap: 16px;
+    padding: 28px 0 12px;
 }
 
 .ing-track {
@@ -101,6 +102,36 @@
 
 .ing-arrow:hover:not(:disabled) { filter: brightness(1.15); }
 .ing-arrow:disabled { opacity: 0.3; cursor: default; }
+
+.ing-dots-viewport {
+    overflow: hidden;
+    margin: 4px auto 8px;
+}
+
+.ing-dots-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 450px;
+    transition: transform 0.25s ease;
+}
+
+.ing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background-color: #D6E5FC;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.ing-dot-active {
+    width: 24px;
+    background-color: #047AFF;
+}
 
 /* ===== Shared image tile ===== */
 

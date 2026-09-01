@@ -1,5 +1,5 @@
 import styles from './Gallery.module.css';
-
+import GalleryIcon from './GalleryIcon';
 export default function GalleryToolbar({ viewMode, onViewModeChange, imageCount }) {
     return (
         <div className={styles['ing-toolbar']} dir="rtl">
@@ -36,8 +36,9 @@ export default function GalleryToolbar({ viewMode, onViewModeChange, imageCount 
                     <option>הישן ביותר</option>
                 </select>
             </div>
-            <span className={styles['ing-count-label']}>{imageCount} תמונות בגלריה </span>
-
+            <span className={styles['ing-count-label']}><strong>{imageCount} תמונות בגלריה </strong>
+                <GalleryIcon classname={styles['ing-count-label']} /></span>
+             
         </div>
     );
 }

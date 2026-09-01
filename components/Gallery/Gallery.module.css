@@ -18,8 +18,8 @@
 
 .ing-count-label {
     color: #6B6B6B;
-    font-size: 14px;
-    font-weight: 400;
+    font-size: 18px;
+font-weight: bold;
 }
 
 .ing-toolbar-controls {
@@ -65,7 +65,14 @@
     background-color: #0D163A;
     color: #FDFEFD;
 }
-
+.ing-count-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6B6B6B;
+    font-size: 14px;
+    font-weight: 400;
+}
 /* ===== Carousel ===== */
 
 .ing-carousel {

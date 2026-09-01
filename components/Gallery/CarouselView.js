@@ -4,32 +4,53 @@ import styles from './Gallery.module.css';
 
 const WINDOW_SIZE = 5;
 
-export default function CarouselView({ images = [], onImageClick }) {
+export default function CarouselView({
+    images = [],
+    onImageClick,
+    onImageFail,
+}) {
     const length = images.length;
     const windowSize = Math.min(WINDOW_SIZE, length);
     const half = Math.floor(windowSize / 2);
 
-    // windowStart = אינדקס התמונה שמיוצגת ע"י הנקודה הכי שמאלית מבין ה-5.
-    // highlightPosition = איזו מבין 5 המשבצות הקבועות (0-4) מודגשת כרגע.
-    // currentIndex תמיד נגזר משני אלה - אף פעם לא state נפרד, כדי שלא יתבדרו.
+    // =========================================================
+    // DOTS STATE
+    // The dots logic is kept because it currently controls
+    // the current image index.
+    // =========================================================
+
     const [dotState, setDotState] = useState(() => ({
-        windowStart: length > 0 ? (length - half) % length : 0,
-        highlightPosition: half, // מתחילים באמצע
+        windowStart:
+            length > 0 ? (length - half) % length : 0,
+        highlightPosition: half,
     }));
 
-    const currentIndex = length > 0 ? (dotState.windowStart + dotState.highlightPosition) % length : 0;
+    const currentIndex =
+        length > 0
+            ? (dotState.windowStart + dotState.highlightPosition) % length
+            : 0;
+
+    // =========================================================
+    // NAVIGATION
+    // =========================================================
 
     const goNext = useCallback(() => {
         if (length === 0) return;
+
         setDotState((prev) => {
+            // Move the active position to the right.
             if (prev.highlightPosition < windowSize - 1) {
-                // עדיין יש לאן "לזוז" בתוך 5 הנקודות הקיימות - רק ההדגשה זזה
-                return { ...prev, highlightPosition: prev.highlightPosition + 1 };
+                return {
+                    ...prev,
+                    highlightPosition:
+                        prev.highlightPosition + 1,
+                };
             }
-            // כבר בקצה הימני - "מגלגלים": השמאלית יוצאת, נקודה חדשה נכנסת מימין,
-            // וההדגשה נשארת קבועה בקצה הימני
+
+            // Move the dots window when reaching the right edge.
             return {
-                windowStart: (prev.windowStart + 1) % length,
+                windowStart:
+                    (prev.windowStart + 1) % length,
                 highlightPosition: windowSize - 1,
             };
         });
@@ -37,79 +58,150 @@ export default function CarouselView({ images = [], onImageClick }) {
 
     const goPrev = useCallback(() => {
         if (length === 0) return;
+
         setDotState((prev) => {
+            // Move the active position to the left.
             if (prev.highlightPosition > 0) {
-                return { ...prev, highlightPosition: prev.highlightPosition - 1 };
+                return {
+                    ...prev,
+                    highlightPosition:
+                        prev.highlightPosition - 1,
+                };
             }
+
+            // Move the dots window when reaching the left edge.
             return {
-                windowStart: (prev.windowStart - 1 + length) % length,
+                windowStart:
+                    (prev.windowStart - 1 + length) % length,
                 highlightPosition: 0,
             };
         });
     }, [length]);
 
+    // Used only by the dots when they are enabled again.
     const jumpToPosition = (position) => {
-        setDotState((prev) => ({ ...prev, highlightPosition: position }));
+        setDotState((prev) => ({
+            ...prev,
+            highlightPosition: position,
+        }));
     };
 
     if (length === 0) return null;
 
-    const prevIndex = (currentIndex - 1 + length) % length;
-    const nextIndex = (currentIndex + 1) % length;
+    const prevIndex =
+        (currentIndex - 1 + length) % length;
+
+    const nextIndex =
+        (currentIndex + 1) % length;
+
     const hasMultiple = length > 1;
 
     return (
         <div>
-            <div className={styles['ing-carousel']} dir="rtl">
-                <button className={styles['ing-arrow']} onClick={goPrev} aria-label="תמונה קודמת" disabled={!hasMultiple}>
+
+            {/* =====================================================
+                IMAGES / CAROUSEL
+            ====================================================== */}
+
+            <div
+                className={styles['ing-carousel']}
+                dir="rtl"
+            >
+                <button
+                    className={styles['ing-arrow']}
+                    onClick={goPrev}
+                    aria-label="תמונה קודמת"
+                    disabled={!hasMultiple}
+                >
                     ‹
                 </button>
 
                 <div className={styles['ing-track']}>
+
                     {hasMultiple && (
-                        <GalleryImage image={images[prevIndex]} size="side" onClick={goPrev} />
+                        <GalleryImage
+                            image={images[prevIndex]}
+                            size="side"
+                            onClick={goPrev}
+                            onFail={onImageFail}
+                        />
                     )}
 
                     <GalleryImage
                         image={images[currentIndex]}
                         size="main"
-                        onClick={() => onImageClick(images[currentIndex].id)}
+                        onClick={() =>
+                            onImageClick(
+                                images[currentIndex].id
+                            )
+                        }
+                        onFail={onImageFail}
                     />
 
                     {hasMultiple && (
-                        <GalleryImage image={images[nextIndex]} size="side" onClick={goNext} />
+                        <GalleryImage
+                            image={images[nextIndex]}
+                            size="side"
+                            onClick={goNext}
+                            onFail={onImageFail}
+                        />
                     )}
                 </div>
 
-                <button className={styles['ing-arrow']} onClick={goNext} aria-label="תמונה הבאה" disabled={!hasMultiple}>
+                <button
+                    className={styles['ing-arrow']}
+                    onClick={goNext}
+                    aria-label="תמונה הבאה"
+                    disabled={!hasMultiple}
+                >
                     ›
                 </button>
             </div>
 
+            {/* =====================================================
+                DOTS / NAVIGATION
+
+                Temporarily disabled.
+                Keep the logic above because currentIndex
+                currently depends on dotState.
+            ====================================================== */}
+
+            {/*
             {hasMultiple && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, padding: '4px 0 8px' }}>
-                    {Array.from({ length: windowSize }, (_, position) => {
-                        const isActive = position === dotState.highlightPosition;
-                        return (
-                            <button
-                                key={position}
-                                onClick={() => jumpToPosition(position)}
-                                aria-label={`מיקום ${position + 1} מתוך ${windowSize}`}
-                                style={{
-                                    width: isActive ? 24 : 8,
-                                    height: 8,
-                                    borderRadius: 999,
-                                    border: 'none',
-                                    padding: 0,
-                                    cursor: 'pointer',
-                                    backgroundColor: isActive ? '#047AFF' : '#D6E5FC',
-                                    transition: 'width 0.2s ease, background-color 0.2s ease',
-                                }}
-                            />
-                        );
-                    })}
+                <div
+                    className={styles['ing-dots']}
+                >
+                    {Array.from(
+                        { length: windowSize },
+                        (_, position) => {
+                            const isActive =
+                                position ===
+                                dotState.highlightPosition;
+
+                            return (
+                                <button
+                                    key={position}
+                                    className={`
+                                        ${styles['ing-dot']}
+                                        ${
+                                            isActive
+                                                ? styles['ing-dot-active']
+                                                : ''
+                                        }
+                                    `}
+                                    onClick={() =>
+                                        jumpToPosition(position)
+                                    }
+                                    aria-label={`מיקום ${
+                                        position + 1
+                                    } מתוך ${windowSize}`}
+                                />
+                            );
+                        }
+                    )}
                 </div>
             )}
+            */}
         </div>
     );
 }

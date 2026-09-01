@@ -89,7 +89,18 @@ font-weight: bold;
     justify-content: center;
     gap: 16px;
     flex: 1;
-    overflow: hidden;
+    overflow: hidden; /* חדש - כדי שהאנימציה לא תגלוש */
+}
+.ing-track-inner .ing-image-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+}
+.ing-track-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px; /* אותו gap כמו שהיה במקור */
+    width: 100%;
 }
 
 .ing-arrow {
@@ -271,3 +282,5 @@ font-weight: bold;
     padding: 4px 8px;
     text-align: center;
 }
+
+

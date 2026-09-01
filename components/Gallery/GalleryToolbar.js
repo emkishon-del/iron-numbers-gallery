@@ -29,8 +29,8 @@ export default function GalleryToolbar({ viewMode, onViewModeChange, imageCount 
                         גריד
                     </button>
                 </div>
-                <select className={styles['ing-sort-select']} disabled>
-                    <option>מיין לפי תאריך העלאה</option>
+                <select className={styles['ing-sort-select']}>
+                    <option> תאריך העלאה</option>
                     <option>לפי שם</option>
                     <option>החדש ביותר</option>
                     <option>הישן ביותר</option>

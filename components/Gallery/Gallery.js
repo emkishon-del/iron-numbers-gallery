@@ -7,6 +7,7 @@ import styles from './Gallery.module.css';
 
 export default function Gallery({ images = [] }) {
   const [viewMode, setViewMode] = useState('carousel'); // 'carousel' | 'grid'
+  const [sortType, setSortType] = useState('date-desc'); // שומר את האופציה שנבחרה
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [failedIds, setFailedIds] = useState(() => new Set());
 
@@ -29,6 +30,8 @@ export default function Gallery({ images = [] }) {
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         imageCount={visibleImages.length}
+        sortType={sortType}
+        onSortChange={setSortType} // מעדכן את ה-State כשהמשתמש בוחר אופציה
       />
 
       {viewMode === 'carousel' ? (

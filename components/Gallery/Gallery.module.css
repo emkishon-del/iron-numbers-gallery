@@ -37,7 +37,8 @@ font-weight: bold;
     font-family: Rubik, sans-serif;
     font-size: 14px;
     color: #1E1E1E;
-    cursor: not-allowed;
+         cursor: pointer;
+
 }
 
 .ing-view-toggle {

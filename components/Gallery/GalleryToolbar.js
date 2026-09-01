@@ -1,6 +1,6 @@
 import styles from './Gallery.module.css';
 import GalleryIcon from './GalleryIcon';
-export default function GalleryToolbar({ viewMode, onViewModeChange, imageCount }) {
+export default function GalleryToolbar({ viewMode, onViewModeChange, imageCount , sortType,onSortChange}) {
     return (
         <div className={styles['ing-toolbar']} dir="rtl">
 
@@ -29,11 +29,10 @@ export default function GalleryToolbar({ viewMode, onViewModeChange, imageCount 
                         גריד
                     </button>
                 </div>
-                <select className={styles['ing-sort-select']}>
-                    <option> תאריך העלאה</option>
-                    <option>לפי שם</option>
-                    <option>החדש ביותר</option>
-                    <option>הישן ביותר</option>
+                <select className={styles['ing-sort-select']} value={sortType} onChange={(e) => onSortChange(e.target.value)}>
+                    <option value="name-asc">לפי שם</option>
+                    <option value="date-desc">החדש ביותר</option>
+                    <option value="date-asc">הישן ביותר</option>
                 </select>
             </div>
             <span className={styles['ing-count-label']}><strong>{imageCount} תמונות בגלריה </strong>

@@ -13,19 +13,12 @@ export default function CarouselView({
     const windowSize = Math.min(WINDOW_SIZE, length);
     const half = Math.floor(windowSize / 2);
 
-    // =========================================================
-    // DOTS STATE
-    // The dots logic is kept because it currently controls
-    // the current image index.
-    // =========================================================
-
     const [dotState, setDotState] = useState(() => ({
         windowStart:
             length > 0 ? (length - half) % length : 0,
         highlightPosition: half,
     }));
 
-    // כיוון התנועה האחרון: 1 = הבא (next), -1 = קודם (prev)
     const [direction, setDirection] = useState(0);
 
     const currentIndex =
@@ -33,16 +26,11 @@ export default function CarouselView({
             ? (dotState.windowStart + dotState.highlightPosition) % length
             : 0;
 
-    // =========================================================
-    // NAVIGATION
-    // =========================================================
-
     const goNext = useCallback(() => {
         if (length === 0) return;
         setDirection(1);
 
         setDotState((prev) => {
-            // Move the active position to the right.
             if (prev.highlightPosition < windowSize - 1) {
                 return {
                     ...prev,
@@ -51,7 +39,6 @@ export default function CarouselView({
                 };
             }
 
-            // Move the dots window when reaching the right edge.
             return {
                 windowStart:
                     (prev.windowStart + 1) % length,
@@ -65,7 +52,6 @@ export default function CarouselView({
         setDirection(-1);
 
         setDotState((prev) => {
-            // Move the active position to the left.
             if (prev.highlightPosition > 0) {
                 return {
                     ...prev,
@@ -74,7 +60,6 @@ export default function CarouselView({
                 };
             }
 
-            // Move the dots window when reaching the left edge.
             return {
                 windowStart:
                     (prev.windowStart - 1 + length) % length,
@@ -83,7 +68,6 @@ export default function CarouselView({
         });
     }, [length]);
 
-    // Used only by the dots when they are enabled again.
     const jumpToPosition = (position) => {
         setDotState((prev) => ({
             ...prev,
@@ -101,14 +85,16 @@ export default function CarouselView({
 
     const hasMultiple = length > 1;
 
-    // רשימת ה"סלוטים" הנוכחיים, לפי id של כל תמונה - נחוץ ל-FlipRow
+    // רשימת ה"סלוטים" הנוכחיים - נחוץ ל-FlipRow.
+    // onImageClick מקבל עכשיו את המיקום האמיתי במערך (currentIndex),
+    // לא את image.id - כי הלייטבוק צריך אינדקס אמיתי, לא מספר תצוגה.
     const slots = hasMultiple
         ? [
               { image: images[prevIndex], size: 'side', onClick: goPrev },
               {
                   image: images[currentIndex],
                   size: 'main',
-                  onClick: () => onImageClick(images[currentIndex].id),
+                  onClick: () => onImageClick(currentIndex),
               },
               { image: images[nextIndex], size: 'side', onClick: goNext },
           ]
@@ -116,19 +102,12 @@ export default function CarouselView({
               {
                   image: images[currentIndex],
                   size: 'main',
-                  onClick: () => onImageClick(images[currentIndex].id),
+                  onClick: () => onImageClick(currentIndex),
               },
           ];
 
     return (
         <div>
-
-            {/* =====================================================
-                IMAGES / CAROUSEL
-                הערה: בגלל dir="rtl", סדר האלמנטים ב-flex מתהפך ויזואלית -
-                הכפתור הראשון בקוד (goNext) מוצג בפועל מימין.
-            ====================================================== */}
-
             <div
                 className={styles['ing-carousel']}
                 dir="rtl"
@@ -208,38 +187,33 @@ export default function CarouselView({
     );
 }
 
-// =========================================================
-// FlipRow
-// אחראי על אנימציית ה-FLIP: מזיז כל תמונה קיימת מהמיקום
-// הישן שלה למיקום החדש בצורה חלקה, וגם נותן אנימציית
-// כניסה לתמונה חדשה שלא הייתה קיימת קודם.
-// =========================================================
+// FlipRow - עכשיו ממופה לפי uid (קבוע) ולא id (שמשתנה עם מיון),
+// כדי שאנימציית ה-FLIP לא "תישבר" גם ברגע שהמשתמש בוחר מיון חדש.
 
 function FlipRow({ slots, onImageFail, direction }) {
-    const nodeRefs = useRef(new Map());   // image.id -> אלמנט DOM
-    const prevRects = useRef(new Map());  // image.id -> מיקום מהרנדר הקודם
+    const nodeRefs = useRef(new Map());   // image.uid -> אלמנט DOM
+    const prevRects = useRef(new Map());  // image.uid -> מיקום מהרנדר הקודם
 
     useLayoutEffect(() => {
         const newRects = new Map();
 
-        nodeRefs.current.forEach((node, id) => {
-            if (node) newRects.set(id, node.getBoundingClientRect());
+        nodeRefs.current.forEach((node, uid) => {
+            if (node) newRects.set(uid, node.getBoundingClientRect());
         });
 
-        // שלב 1: תמונות שהיו קיימות גם קודם - מזיזים מהמיקום הישן לחדש
         let referenceDelta = 0;
 
-        nodeRefs.current.forEach((node, id) => {
+        nodeRefs.current.forEach((node, uid) => {
             if (!node) return;
-            const oldRect = prevRects.current.get(id);
-            const newRect = newRects.get(id);
+            const oldRect = prevRects.current.get(uid);
+            const newRect = newRects.get(uid);
 
             if (oldRect && newRect) {
                 const deltaX = oldRect.left - newRect.left;
 
                 if (deltaX !== 0) {
                     if (referenceDelta === 0) {
-                        referenceDelta = deltaX; // שומרים דוגמה למרחק תנועה טיפוסי
+                        referenceDelta = deltaX;
                     }
 
                     node.style.transition = 'none';
@@ -253,13 +227,10 @@ function FlipRow({ slots, onImageFail, direction }) {
             }
         });
 
-        // שלב 2: תמונות חדשות לגמרי (אין להן oldRect) - נותנים להן
-        // נקודת התחלה מלאכותית בכיוון התנועה, כדי שגם הן "ייכנסו"
-        // עם אנימציה ולא יופיעו בבום.
-        nodeRefs.current.forEach((node, id) => {
+        nodeRefs.current.forEach((node, uid) => {
             if (!node) return;
-            const oldRect = prevRects.current.get(id);
-            const newRect = newRects.get(id);
+            const oldRect = prevRects.current.get(uid);
+            const newRect = newRects.get(uid);
 
             if (!oldRect && newRect) {
                 const enterOffset =
@@ -286,10 +257,10 @@ function FlipRow({ slots, onImageFail, direction }) {
         <div className={styles['ing-track-inner']}>
             {slots.map(({ image, size, onClick }) => (
                 <div
-                    key={image.id}
+                    key={image.uid}
                     ref={(node) => {
-                        if (node) nodeRefs.current.set(image.id, node);
-                        else nodeRefs.current.delete(image.id);
+                        if (node) nodeRefs.current.set(image.uid, node);
+                        else nodeRefs.current.delete(image.uid);
                     }}
                     style={{
                         width: size === 'main' ? '60%' : '20%',

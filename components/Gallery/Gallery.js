@@ -5,24 +5,46 @@ import GridView from './GridView';
 import Lightbox from './Lightbox/Lightbox';
 import styles from './Gallery.module.css';
 
+function compareImages(a, b, sortType) {
+  switch (sortType) {
+    case 'name-asc': {
+      const nameA = a.name || '';
+      const nameB = b.name || '';
+      return nameA.localeCompare(nameB, 'he');
+    }
+    case 'date-desc':
+      return new Date(b.date) - new Date(a.date);
+    case 'date-asc':
+      return new Date(a.date) - new Date(b.date);
+    default:
+      return 0;
+  }
+}
+
 export default function Gallery({ images = [] }) {
   const [viewMode, setViewMode] = useState('carousel'); // 'carousel' | 'grid'
-  const [sortType, setSortType] = useState('date-desc'); // שומר את האופציה שנבחרה
+  const [sortType, setSortType] = useState('date-desc');
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [failedIds, setFailedIds] = useState(() => new Set());
 
-  const handleImageFail = (id) => {
+  // מקבל עכשיו uid (הזהות הקבועה), לא id (שמשתנה עם המיון)
+  const handleImageFail = (uid) => {
     setFailedIds((prev) => {
       const next = new Set(prev);
-      next.add(id);
+      next.add(uid);
       return next;
     });
   };
 
-  const visibleImages = useMemo(
-    () => images.filter((image) => !failedIds.has(image.id)),
-    [images, failedIds]
-  );
+  const visibleImages = useMemo(() => {
+    // 1. מסננים לפי uid קבוע - לא מושפע מהמיון
+    const filtered = images.filter((image) => !failedIds.has(image.uid));
+    // 2. ממיינים
+    const sorted = [...filtered].sort((a, b) => compareImages(a, b, sortType));
+    // 3. עכשיו, ורק עכשיו, קובעים מחדש את ה-id לפי המיקום הסופי (1, 2, 3...)
+    //    ה-uid המקורי לא נוגע בכלל - הוא נשאר כפי שהיה
+    return sorted.map((image, index) => ({ ...image, id: index + 1 }));
+  }, [images, failedIds, sortType]);
 
   return (
     <div className={styles['ing-gallery']}>
@@ -31,7 +53,7 @@ export default function Gallery({ images = [] }) {
         onViewModeChange={setViewMode}
         imageCount={visibleImages.length}
         sortType={sortType}
-        onSortChange={setSortType} // מעדכן את ה-State כשהמשתמש בוחר אופציה
+        onSortChange={setSortType}
       />
 
       {viewMode === 'carousel' ? (

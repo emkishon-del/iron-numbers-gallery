@@ -15,7 +15,7 @@ export default function GalleryImage({ image, size, onClick, onFail }) {
 
   const handleError = () => {
     setFailed(true);
-    onFail?.(image.id); // מודיעים להורה שהתמונה הזו צריכה להיעלם לגמרי מהרשימה
+    onFail?.(image.uid); // uid קבוע - לא image.id שמשתנה עם המיון
   };
 
   if (failed) {

@@ -35,10 +35,12 @@ export default function GridView({ images = [], onImageClick, onImageFail }) {
       <div className={styles['ing-grid']} dir="rtl">
         {visibleImages.map((image) => (
           <GalleryImage
-            key={image.id}
+            key={image.uid}
             image={image}
             size="grid"
-            onClick={() => onImageClick(image.id)}
+            // הלייטבוקס צריך את המיקום האמיתי במערך המקורי (0-based),
+            // לא את image.id (שהוא רק מספר תצוגה) - מוצאים אותו לפי uid הקבוע
+            onClick={() => onImageClick(images.findIndex((img) => img.uid === image.uid))}
             onFail={onImageFail}
           />
         ))}

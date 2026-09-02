@@ -88,13 +88,13 @@ export default function CarouselView({
 
     const slots = hasMultiple
         ? [
-            { image: images[prevIndex], size: 'side', onClick: goPrev },
+            { image: images[prevIndex], size: 'side', onClick:  () => onImageClick((currentIndex-1) %length) },
             {
                 image: images[currentIndex],
                 size: 'main',
                 onClick: () => onImageClick(currentIndex),
             },
-            { image: images[nextIndex], size: 'side', onClick: goNext },
+            { image: images[nextIndex], size: 'side', onClick:  () => onImageClick((currentIndex+1) %length) },
         ]
         : [
             {

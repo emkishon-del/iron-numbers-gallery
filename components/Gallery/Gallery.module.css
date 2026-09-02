@@ -100,10 +100,10 @@ font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px; /* אותו gap כמו שהיה במקור */
+    gap: 16px;
     width: 100%;
+    will-change: transform;
 }
-
 .ing-arrow {
     background: #0D163A;
     color: #FDFEFD;

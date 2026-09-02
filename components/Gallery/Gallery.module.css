@@ -1,3 +1,7 @@
+/* =========================================
+   01. IMPORTS & GENERAL
+   ========================================= */
+
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
 
 .ing-gallery {
@@ -7,7 +11,10 @@
     border-radius: 20px;
 }
 
-/* ===== Toolbar ===== */
+
+/* =========================================
+   02. TOOLBAR
+   ========================================= */
 
 .ing-toolbar {
     display: flex;
@@ -19,26 +26,13 @@
 .ing-count-label {
     color: #6B6B6B;
     font-size: 18px;
-font-weight: bold;
+    font-weight: bold;
 }
 
 .ing-toolbar-controls {
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.ing-sort-select {
-    height: 44px;
-    padding: 0 14px;
-    border: 1px solid #D6E5FC;
-    border-radius: 16px;
-    background-color: #FDFEFD;
-    font-family: Rubik, sans-serif;
-    font-size: 14px;
-    color: #1E1E1E;
-         cursor: pointer;
-
 }
 
 .ing-view-toggle {
@@ -66,6 +60,7 @@ font-weight: bold;
     background-color: #0D163A;
     color: #FDFEFD;
 }
+
 .ing-count-label {
     display: flex;
     align-items: center;
@@ -74,7 +69,112 @@ font-weight: bold;
     font-size: 14px;
     font-weight: 400;
 }
-/* ===== Carousel ===== */
+
+
+/* =========================================
+   03. SORT DROPDOWN
+   ========================================= */
+
+.ing-sort-select {
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid #D6E5FC;
+    border-radius: 16px;
+    background-color: #FDFEFD;
+    font-family: Rubik, sans-serif;
+    font-size: 14px;
+    color: #1E1E1E;
+    cursor: pointer;
+}
+
+.ing-sort-dropdown {
+    position: relative;
+}
+
+.ing-sort-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid #D6E5FC;
+    border-radius: 16px;
+    background-color: #FDFEFD;
+    font-family: Rubik, sans-serif;
+    font-size: 14px;
+    color: #1E1E1E;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.ing-sort-button-label {
+    color: #6B6B6B;
+    font-weight: 400;
+}
+
+.ing-sort-button-label strong {
+    color: #1E1E1E;
+    font-weight: 500;
+}
+
+.ing-sort-chevron {
+    font-size: 16px;
+    color: #6B6B6B;
+    transition: transform 0.15s ease;
+    line-height: 1;
+}
+
+.ing-sort-chevron-open {
+    transform: rotate(180deg);
+}
+
+.ing-sort-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 160px;
+    background-color: #FDFEFD;
+    border: 1px solid #D6E5FC;
+    border-radius: 16px;
+    box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
+    padding: 6px;
+    list-style: none;
+    margin: 0;
+    z-index: 20;
+}
+
+.ing-sort-option {
+    display: block;
+    width: 100%;
+    text-align: right;
+    border: none;
+    background: transparent;
+    font-family: Rubik, sans-serif;
+    font-size: 14px;
+    color: #1E1E1E;
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ing-sort-option:hover {
+    background-color: #F6F5FA;
+}
+
+.ing-sort-option-active {
+    background-color: #0D163A;
+    color: #FDFEFD;
+}
+
+.ing-sort-option-active:hover {
+    background-color: #0D163A;
+}
+
+
+/* =========================================
+   04. CAROUSEL & TRACK
+   ========================================= */
 
 .ing-carousel {
     display: flex;
@@ -92,10 +192,12 @@ font-weight: bold;
     flex: 1;
     overflow: hidden; /* חדש - כדי שהאנימציה לא תגלוש */
 }
+
 .ing-track-inner .ing-image-wrapper {
     width: 100% !important;
     height: 100% !important;
 }
+
 .ing-track-inner {
     display: flex;
     align-items: center;
@@ -104,6 +206,7 @@ font-weight: bold;
     width: 100%;
     will-change: transform;
 }
+
 .ing-arrow {
     background: #0D163A;
     color: #FDFEFD;
@@ -152,7 +255,102 @@ font-weight: bold;
     background-color: #047AFF;
 }
 
-/* ===== Shared image tile ===== */
+
+/* =========================================
+   05. GRID & GRID SLIDER
+   ========================================= */
+
+.ing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 8px 0 24px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.ing-grid-item {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ing-grid-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ing-grid-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
+}
+
+.ing-grid-slider {
+    overflow: hidden;
+    position: relative;
+}
+
+.ing-grid-track {
+    display: flex;
+    width: 100%;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ing-grid-half {
+    flex: 0 0 100%;
+    min-width: 0;
+}
+
+.ing-grid-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 8px 0 4px;
+}
+
+.ing-page-arrow {
+    background: #0D163A;
+    color: #FDFEFD;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
+    transition: filter 0.15s ease;
+}
+
+.ing-page-arrow:hover:not(:disabled) { filter: brightness(1.15); }
+.ing-page-arrow:disabled { opacity: 0.3; cursor: default; }
+
+.ing-page-label {
+    font-size: 13px;
+    color: #6B6B6B;
+    font-family: Rubik, sans-serif;
+}
+
+.ing-grid-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(253, 254, 253, 0.9);
+    color: #6B6B6B;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 4px 8px;
+    text-align: center;
+}
+
+
+/* =========================================
+   06. SHARED IMAGE TILES & STATES
+   ========================================= */
 
 .ing-image-wrapper {
     position: relative;
@@ -210,78 +408,3 @@ font-weight: bold;
     50% { opacity: 0.6; }
     100% { opacity: 1; }
 }
-
-/* ===== Grid ===== */
-
-.ing-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    padding: 8px 0 24px;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.ing-grid-item {
-    width: 100%;
-    height: 220px;
-    overflow: hidden;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.ing-grid-item img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.ing-grid-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
-}
-
-.ing-grid-pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 8px 0 4px;
-}
-
-.ing-page-arrow {
-    background: #0D163A;
-    color: #FDFEFD;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
-    transition: filter 0.15s ease;
-}
-
-.ing-page-arrow:hover:not(:disabled) { filter: brightness(1.15); }
-.ing-page-arrow:disabled { opacity: 0.3; cursor: default; }
-
-.ing-page-label {
-    font-size: 13px;
-    color: #6B6B6B;
-    font-family: Rubik, sans-serif;
-}
-
-.ing-grid-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(253, 254, 253, 0.9);
-    color: #6B6B6B;
-    font-size: 12px;
-    font-weight: 400;
-    padding: 4px 8px;
-    text-align: center;
-}
-
-

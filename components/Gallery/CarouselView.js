@@ -1,8 +1,31 @@
-import { useState, useCallback, useRef, useLayoutEffect } from 'react';
+import { useState, useCallback, useRef, useLayoutEffect, useEffect } from 'react';
 import GalleryImage from './GalleryImage';
 import styles from './Gallery.module.css';
 
-// const WINDOW_SIZE = 5; // כבר לא בשימוש כרגע (שייך לנקודות)
+/** Duration for one carousel step (ms). Easy to tune. */
+const TRANSITION_MS = 450;
+
+const SIZE_STYLES = {
+    main: {
+        width: '60%',
+        maxWidth: '600px',
+        height: '400px',
+        opacity: 1,
+    },
+    side: {
+        width: '20%',
+        maxWidth: 'none',
+        height: '250px',
+        opacity: 0.55,
+    },
+    // Real physical size (not 0) so enter/exit can animate; clipped by overflow:hidden
+    far: {
+        width: '20%',
+        maxWidth: 'none',
+        height: '250px',
+        opacity: 0,
+    },
+};
 
 export default function CarouselView({
     images = [],
@@ -11,74 +34,47 @@ export default function CarouselView({
 }) {
     const length = images.length;
 
-    // ניהול כיוון האנימציה (ימינה/שמאלה)
-    const [direction, setDirection] = useState(0);
-
-    // לוגיקה חדשה ופשוטה: שמירת האינדקס הנוכחי בלבד
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    const isAnimatingRef = useRef(false);
+    const animTimerRef = useRef(null);
+    const directionRef = useRef(0);
+
+    const finishAnimation = useCallback(() => {
+        isAnimatingRef.current = false;
+        setIsAnimating(false);
+        animTimerRef.current = null;
+    }, []);
+
+    const startAnimationLock = useCallback(() => {
+        isAnimatingRef.current = true;
+        setIsAnimating(true);
+        if (animTimerRef.current) {
+            clearTimeout(animTimerRef.current);
+        }
+        animTimerRef.current = setTimeout(finishAnimation, TRANSITION_MS + 50);
+    }, [finishAnimation]);
+
+    useEffect(() => {
+        return () => {
+            if (animTimerRef.current) clearTimeout(animTimerRef.current);
+        };
+    }, []);
 
     const goNext = useCallback(() => {
-        if (length === 0) return;
-        setDirection(1);
+        if (length === 0 || isAnimatingRef.current) return;
+        directionRef.current = 1;
+        startAnimationLock();
         setCurrentIndex((prev) => (prev + 1) % length);
-    }, [length]);
+    }, [length, startAnimationLock]);
 
     const goPrev = useCallback(() => {
-        if (length === 0) return;
-        setDirection(-1);
+        if (length === 0 || isAnimatingRef.current) return;
+        directionRef.current = -1;
+        startAnimationLock();
         setCurrentIndex((prev) => (prev - 1 + length) % length);
-    }, [length]);
-
-    /* =====================================================
-       לוגיקת הנקודות (Dots) הישנה - שמורה בהערה
-       ===================================================== 
-    const windowSize = Math.min(WINDOW_SIZE, length);
-    const half = Math.floor(windowSize / 2);
-
-    const [dotState, setDotState] = useState(() => ({
-        windowStart: length > 0 ? (length - half) % length : 0,
-        highlightPosition: half,
-    }));
-
-    const currentIndex = length > 0 
-        ? (dotState.windowStart + dotState.highlightPosition) % length 
-        : 0;
-
-    const goNext = useCallback(() => {
-        if (length === 0) return;
-        setDirection(1);
-        setDotState((prev) => {
-            if (prev.highlightPosition < windowSize - 1) {
-                return { ...prev, highlightPosition: prev.highlightPosition + 1 };
-            }
-            return {
-                windowStart: (prev.windowStart + 1) % length,
-                highlightPosition: windowSize - 1,
-            };
-        });
-    }, [length, windowSize]);
-
-    const goPrev = useCallback(() => {
-        if (length === 0) return;
-        setDirection(-1);
-        setDotState((prev) => {
-            if (prev.highlightPosition > 0) {
-                return { ...prev, highlightPosition: prev.highlightPosition - 1 };
-            }
-            return {
-                windowStart: (prev.windowStart - 1 + length) % length,
-                highlightPosition: 0,
-            };
-        });
-    }, [length]);
-
-    const jumpToPosition = (position) => {
-        setDotState((prev) => ({
-            ...prev,
-            highlightPosition: position,
-        }));
-    };
-    ===================================================== */
+    }, [length, startAnimationLock]);
 
     if (length === 0) return null;
 
@@ -86,35 +82,49 @@ export default function CarouselView({
     const nextIndex = (currentIndex + 1) % length;
     const hasMultiple = length > 1;
 
-    const slots = hasMultiple
-        ? [
-            { image: images[prevIndex], size: 'side', onClick:  () => onImageClick((currentIndex-1) %length) },
+    let slots;
+    if (length >= 5) {
+        const farPrevIndex = (currentIndex - 2 + length) % length;
+        const farNextIndex = (currentIndex + 2) % length;
+        slots = [
+            { image: images[farPrevIndex], size: 'far', onClick: () => {} },
+            { image: images[prevIndex], size: 'side', onClick: () => onImageClick?.(prevIndex) },
             {
                 image: images[currentIndex],
                 size: 'main',
-                onClick: () => onImageClick(currentIndex),
+                onClick: () => onImageClick?.(currentIndex),
             },
-            { image: images[nextIndex], size: 'side', onClick:  () => onImageClick((currentIndex+1) %length) },
-        ]
-        : [
+            { image: images[nextIndex], size: 'side', onClick: () => onImageClick?.(nextIndex) },
+            { image: images[farNextIndex], size: 'far', onClick: () => {} },
+        ];
+    } else if (hasMultiple) {
+        slots = [
+            { image: images[prevIndex], size: 'side', onClick: () => onImageClick?.(prevIndex) },
             {
                 image: images[currentIndex],
                 size: 'main',
-                onClick: () => onImageClick(currentIndex),
+                onClick: () => onImageClick?.(currentIndex),
+            },
+            { image: images[nextIndex], size: 'side', onClick: () => onImageClick?.(nextIndex) },
+        ];
+    } else {
+        slots = [
+            {
+                image: images[currentIndex],
+                size: 'main',
+                onClick: () => onImageClick?.(currentIndex),
             },
         ];
+    }
 
     return (
         <div>
-            <div
-                className={styles['ing-carousel']}
-                dir="rtl"
-            >
+            <div className={styles['ing-carousel']} dir="rtl">
                 <button
                     className={styles['ing-arrow']}
                     onClick={goNext}
                     aria-label="תמונה הבאה"
-                    disabled={!hasMultiple}
+                    disabled={!hasMultiple || isAnimating}
                 >
                     ‹
                 </button>
@@ -123,7 +133,7 @@ export default function CarouselView({
                     <FlipRow
                         slots={slots}
                         onImageFail={onImageFail}
-                        direction={direction}
+                        directionRef={directionRef}
                     />
                 </div>
 
@@ -131,207 +141,186 @@ export default function CarouselView({
                     className={styles['ing-arrow']}
                     onClick={goPrev}
                     aria-label="תמונה קודמת"
-                    disabled={!hasMultiple}
+                    disabled={!hasMultiple || isAnimating}
                 >
                     ›
                 </button>
             </div>
-
-            {/* =====================================================
-                DOTS / NAVIGATION - JSX
-                שמור בהערה במידה ותרצה להחזיר
-            ====================================================== 
-            {hasMultiple && (
-                <div className={styles['ing-dots']}>
-                    {Array.from(
-                        { length: windowSize },
-                        (_, position) => {
-                            const isActive = position === dotState.highlightPosition;
-                            return (
-                                <button
-                                    key={position}
-                                    className={`
-                                        ${styles['ing-dot']}
-                                        ${isActive ? styles['ing-dot-active'] : ''}
-                                    `}
-                                    onClick={() => jumpToPosition(position)}
-                                    aria-label={`מיקום ${position + 1} מתוך ${windowSize}`}
-                                />
-                            );
-                        }
-                    )}
-                </div>
-            )}
-            ====================================================== */}
         </div>
     );
 }
 
-function FlipRow({ slots, onImageFail, direction }) {
+function FlipRow({ slots, onImageFail, directionRef }) {
     const nodeRefs = useRef(new Map());
     const prevRects = useRef(new Map());
+    const prevOpacities = useRef(new Map());
+    const isFirstLayout = useRef(true);
+    const trackRef = useRef(null);
+
+    const layoutKey = slots.map((s) => `${s.image.uid}:${s.size}`).join('|');
 
     useLayoutEffect(() => {
+        const nodes = nodeRefs.current;
         const newRects = new Map();
+        const newOpacities = new Map();
 
-        // מודדים את המיקום והגודל הנוכחיים
-        nodeRefs.current.forEach((node, uid) => {
-            if (node) {
-                newRects.set(
-                    uid,
-                    node.getBoundingClientRect()
-                );
-            }
+        // ניקוי transform ישן לפני מדידה
+        nodes.forEach((node) => {
+            if (!node) return;
+            node.style.transition = 'none';
+            node.style.transform = 'none';
+        });
+        if (trackRef.current) void trackRef.current.offsetWidth;
+
+        const opacityByUid = new Map(
+            slots.map((s) => [s.image.uid, SIZE_STYLES[s.size]?.opacity ?? 1]),
+        );
+
+        nodes.forEach((node, uid) => {
+            if (!node) return;
+            newRects.set(uid, node.getBoundingClientRect());
+            newOpacities.set(uid, opacityByUid.get(uid) ?? 1);
         });
 
+        if (isFirstLayout.current) {
+            isFirstLayout.current = false;
+            prevRects.current = newRects;
+            prevOpacities.current = newOpacities;
+            return;
+        }
+
         let referenceDelta = 0;
+        const plays = [];
 
-        // =====================================================
-        // תמונות שהיו קיימות גם קודם
-        // =====================================================
-
-        nodeRefs.current.forEach((node, uid) => {
+        nodes.forEach((node, uid) => {
             if (!node) return;
 
             const oldRect = prevRects.current.get(uid);
             const newRect = newRects.get(uid);
-
             if (!oldRect || !newRect) return;
 
-            const deltaX =
-                oldRect.left - newRect.left;
+            const deltaX = oldRect.left - newRect.left;
+            const deltaY = oldRect.top - newRect.top;
+            const scaleX = oldRect.width / (newRect.width || 1);
+            const scaleY = oldRect.height / (newRect.height || 1);
+            const oldOpacity = prevOpacities.current.has(uid)
+                ? prevOpacities.current.get(uid)
+                : 1;
+            const targetOpacity = newOpacities.get(uid) ?? 1;
 
-            const deltaY =
-                oldRect.top - newRect.top;
+            const moved =
+                Math.abs(deltaX) > 0.5 ||
+                Math.abs(deltaY) > 0.5 ||
+                Math.abs(scaleX - 1) > 0.001 ||
+                Math.abs(scaleY - 1) > 0.001 ||
+                Math.abs(oldOpacity - targetOpacity) > 0.01;
 
-            const scaleX =
-                oldRect.width / newRect.width;
+            if (!moved) return;
 
-            const scaleY =
-                oldRect.height / newRect.height;
-
-            if (
-                deltaX !== 0 ||
-                deltaY !== 0 ||
-                scaleX !== 1 ||
-                scaleY !== 1
-            ) {
-                if (referenceDelta === 0 && deltaX !== 0) {
-                    referenceDelta = deltaX;
-                }
-                node.style.transformOrigin = 'top left';
-
-                // מבטלים transition בזמן שאנחנו
-                // מחזירים את האלמנט למצב הקודם
-                node.style.transition = 'none';
-
-                // מחזירים אותו ויזואלית למיקום
-                // ולגודל הקודמים
-                node.style.transform = `
-                    translate(${deltaX}px, ${deltaY}px)
-                    scale(${scaleX}, ${scaleY})
-                `;
-
-                requestAnimationFrame(() => {
-                    node.style.transition =
-                        'transform 500ms ease';
-
-                    // עכשיו הוא נע למקום ולגודל החדשים
-                    node.style.transform =
-                        'translate(0, 0) scale(1)';
-                });
+            if (referenceDelta === 0 && Math.abs(deltaX) > 0.5) {
+                referenceDelta = deltaX;
             }
-        });
 
-        // =====================================================
-        // תמונות חדשות
-        // =====================================================
+            // חשוב: top left — לא center
+            node.style.transformOrigin = 'top left';
+            node.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
+            node.style.opacity = String(oldOpacity);
 
-        nodeRefs.current.forEach((node, uid) => {
-            if (!node) return;
-
-            const oldRect =
-                prevRects.current.get(uid);
-
-            const newRect =
-                newRects.get(uid);
-
-            if (oldRect || !newRect) return;
-
-            const enterOffset =
-                referenceDelta !== 0
-                    ? referenceDelta
-                    : direction === 1
-                        ? -80
-                        : 80;
-
-            node.style.transition = 'none';
-
-            node.style.transform = `
-                translateX(${enterOffset}px)
-                scale(0.8)
-            `;
-
-            requestAnimationFrame(() => {
-                node.style.transition =
-                    'transform 450ms ease';
-
-                node.style.transform =
-                    'translateX(0) scale(1)';
+            plays.push(() => {
+                node.style.transition = [
+                    `transform ${TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+                    `opacity ${TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+                ].join(', ');
+                node.style.transform = 'translate(0px, 0px) scale(1, 1)';
+                node.style.opacity = String(targetOpacity);
             });
         });
 
-        // המידות הנוכחיות יהפכו ל"ישנות"
-        // ב-render הבא
+        nodes.forEach((node, uid) => {
+            if (!node) return;
+            const oldRect = prevRects.current.get(uid);
+            const newRect = newRects.get(uid);
+            if (oldRect || !newRect) return;
+
+            const dir = directionRef.current;
+            const enterOffset =
+                referenceDelta !== 0
+                    ? referenceDelta
+                    : dir === 1
+                      ? newRect.width || 80
+                      : -(newRect.width || 80);
+
+            const targetOpacity = newOpacities.get(uid) ?? 0;
+
+            node.style.transformOrigin = 'top left';
+            node.style.transform = `translate(${enterOffset}px, 0px) scale(1, 1)`;
+            node.style.opacity = '0';
+
+            plays.push(() => {
+                node.style.transition = [
+                    `transform ${TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+                    `opacity ${TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+                ].join(', ');
+                node.style.transform = 'translate(0px, 0px) scale(1, 1)';
+                node.style.opacity = String(targetOpacity);
+            });
+        });
+
+        if (trackRef.current) void trackRef.current.offsetWidth;
+
+        requestAnimationFrame(() => {
+            plays.forEach((play) => play());
+        });
+
         prevRects.current = newRects;
-    });
+        prevOpacities.current = newOpacities;
+
+        const clearTimer = setTimeout(() => {
+            nodes.forEach((node) => {
+                if (!node) return;
+                node.style.transition = '';
+                node.style.transform = 'none';
+            });
+        }, TRANSITION_MS + 40);
+
+        return () => clearTimeout(clearTimer);
+    }, [layoutKey, directionRef, slots]);
 
     return (
-        <div className={styles['ing-track-inner']}>
-            {slots.map(({ image, size, onClick }) => (
-                <div
-                    key={image.uid}
-                    ref={(node) => {
-                        if (node) {
-                            nodeRefs.current.set(
-                                image.uid,
-                                node
-                            );
-                        } else {
-                            nodeRefs.current.delete(
-                                image.uid
-                            );
-                        }
-                    }}
-                    style={{
-                        width:
-                            size === 'main'
-                                ? '60%'
-                                : '20%',
-
-                        maxWidth:
-                            size === 'main'
-                                ? '600px'
-                                : undefined,
-
-                        height:
-                            size === 'main'
-                                ? '400px'
-                                : '250px',
-
-                        flexShrink: 0,
-                        transformOrigin: 'top left',
-
-                    }}
-                >
-                    <GalleryImage
-                        image={image}
-                        size={size}
-                        onClick={onClick}
-                        onFail={onImageFail}
-                    />
-                </div>
-            ))}
+        <div className={styles['ing-track-inner']} ref={trackRef}>
+            {slots.map(({ image, size, onClick }) => {
+                const box = SIZE_STYLES[size] || SIZE_STYLES.side;
+                return (
+                    <div
+                        key={image.uid}
+                        className={styles['ing-carousel-slot']}
+                        ref={(node) => {
+                            if (node) {
+                                nodeRefs.current.set(image.uid, node);
+                            } else {
+                                nodeRefs.current.delete(image.uid);
+                            }
+                        }}
+                        style={{
+                            width: box.width,
+                            maxWidth: box.maxWidth,
+                            height: box.height,
+                            opacity: box.opacity,
+                            flexShrink: 0,
+                            overflow: 'hidden',
+                            transformOrigin: 'top left',
+                            pointerEvents: size === 'far' ? 'none' : undefined,
+                        }}
+                    >
+                        <GalleryImage
+                            image={image}
+                            size={size === 'far' ? 'side' : size}
+                            onClick={size === 'far' ? undefined : onClick}
+                            onFail={onImageFail}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 }

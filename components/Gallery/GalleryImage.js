@@ -4,6 +4,7 @@ import styles from './Gallery.module.css';
 const SIZE_CLASS = {
   main: 'ing-main',
   side: 'ing-side',
+  far: 'ing-far',
   grid: 'ing-grid-item',
 };
 

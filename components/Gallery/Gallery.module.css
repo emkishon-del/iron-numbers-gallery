@@ -1,40 +1,32 @@
 /* =========================================
    01. IMPORTS & GENERAL
    ========================================= */
-
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
-
 .ing-gallery {
     font-family: Rubik, sans-serif;
     background-color: #F6F5FA;
     padding: 20px;
     border-radius: 20px;
 }
-
-
 /* =========================================
    02. TOOLBAR
    ========================================= */
-
 .ing-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
 }
-
 .ing-count-label {
     color: #6B6B6B;
     font-size: 18px;
     font-weight: bold;
 }
-
 .ing-toolbar-controls {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-
 .ing-view-toggle {
     display: flex;
     background-color: #EEEEEE;
@@ -42,7 +34,6 @@
     padding: 4px;
     gap: 4px;
 }
-
 .ing-toggle-btn {
     border: none;
     background: transparent;
@@ -55,12 +46,10 @@
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
-
 .ing-toggle-btn.ing-active {
     background-color: #0D163A;
     color: #FDFEFD;
 }
-
 .ing-count-label {
     display: flex;
     align-items: center;
@@ -69,12 +58,9 @@
     font-size: 14px;
     font-weight: 400;
 }
-
-
 /* =========================================
    03. SORT DROPDOWN
    ========================================= */
-
 .ing-sort-select {
     height: 44px;
     padding: 0 14px;
@@ -86,11 +72,9 @@
     color: #1E1E1E;
     cursor: pointer;
 }
-
 .ing-sort-dropdown {
     position: relative;
 }
-
 .ing-sort-button {
     display: flex;
     align-items: center;
@@ -106,28 +90,23 @@
     cursor: pointer;
     white-space: nowrap;
 }
-
 .ing-sort-button-label {
     color: #6B6B6B;
     font-weight: 400;
 }
-
 .ing-sort-button-label strong {
     color: #1E1E1E;
     font-weight: 500;
 }
-
 .ing-sort-chevron {
     font-size: 16px;
     color: #6B6B6B;
     transition: transform 0.15s ease;
     line-height: 1;
 }
-
 .ing-sort-chevron-open {
     transform: rotate(180deg);
 }
-
 .ing-sort-menu {
     position: absolute;
     top: calc(100% + 6px);
@@ -142,7 +121,6 @@
     margin: 0;
     z-index: 20;
 }
-
 .ing-sort-option {
     display: block;
     width: 100%;
@@ -157,25 +135,19 @@
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
-
 .ing-sort-option:hover {
     background-color: #F6F5FA;
 }
-
 .ing-sort-option-active {
     background-color: #0D163A;
     color: #FDFEFD;
 }
-
 .ing-sort-option-active:hover {
     background-color: #0D163A;
 }
-
-
 /* =========================================
    04. CAROUSEL & TRACK
    ========================================= */
-
 .ing-carousel {
     display: flex;
     align-items: center;
@@ -183,21 +155,17 @@
     gap: 16px;
     padding: 28px 0 12px;
 }
-
 .ing-track {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 16px;
     flex: 1;
-    overflow: hidden; /* חדש - כדי שהאנימציה לא תגלוש */
+    /* Clip far-left / far-right slots — they keep real width for FLIP */
+    overflow: hidden;
+    /* Reserve main image height so the track doesn't jump vertically */
+    min-height: 400px;
 }
-
-.ing-track-inner .ing-image-wrapper {
-    width: 100% !important;
-    height: 100% !important;
-}
-
 .ing-track-inner {
     display: flex;
     align-items: center;
@@ -206,7 +174,19 @@
     width: 100%;
     will-change: transform;
 }
-
+/* Slot owns size/opacity; image fills the slot */
+.ing-carousel-slot {
+    position: relative;
+    border-radius: 20px;
+    /* Do not CSS-transition width/height here — FLIP owns the motion */
+}
+.ing-track-inner .ing-image-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    /* Parent slot animates opacity via FLIP; avoid class-based jumps */
+    opacity: 1 !important;
+    transition: none !important;
+}
 .ing-arrow {
     background: #0D163A;
     color: #FDFEFD;
@@ -221,15 +201,12 @@
     box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
     transition: filter 0.15s ease;
 }
-
 .ing-arrow:hover:not(:disabled) { filter: brightness(1.15); }
 .ing-arrow:disabled { opacity: 0.3; cursor: default; }
-
 .ing-dots-viewport {
     overflow: hidden;
     margin: 4px auto 8px;
 }
-
 .ing-dots-track {
     display: flex;
     align-items: center;
@@ -237,7 +214,6 @@
     width: 450px;
     transition: transform 0.25s ease;
 }
-
 .ing-dot {
     width: 8px;
     height: 8px;
@@ -249,17 +225,13 @@
     cursor: pointer;
     transition: width 0.2s ease, background-color 0.2s ease;
 }
-
 .ing-dot-active {
     width: 24px;
     background-color: #047AFF;
 }
-
-
 /* =========================================
    05. GRID & GRID SLIDER
    ========================================= */
-
 .ing-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -268,42 +240,35 @@
     max-width: 900px;
     margin: 0 auto;
 }
-
 .ing-grid-item {
     width: 100%;
     height: 220px;
     overflow: hidden;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-
 .ing-grid-item img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 .ing-grid-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
 }
-
 .ing-grid-slider {
     overflow: hidden;
     position: relative;
 }
-
 .ing-grid-track {
     display: flex;
     width: 100%;
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .ing-grid-half {
     flex: 0 0 100%;
     min-width: 0;
 }
-
 .ing-grid-pagination {
     display: flex;
     align-items: center;
@@ -311,7 +276,6 @@
     gap: 16px;
     padding: 8px 0 4px;
 }
-
 .ing-page-arrow {
     background: #0D163A;
     color: #FDFEFD;
@@ -324,16 +288,13 @@
     box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
     transition: filter 0.15s ease;
 }
-
 .ing-page-arrow:hover:not(:disabled) { filter: brightness(1.15); }
 .ing-page-arrow:disabled { opacity: 0.3; cursor: default; }
-
 .ing-page-label {
     font-size: 13px;
     color: #6B6B6B;
     font-family: Rubik, sans-serif;
 }
-
 .ing-grid-caption {
     position: absolute;
     bottom: 0;
@@ -346,12 +307,9 @@
     padding: 4px 8px;
     text-align: center;
 }
-
-
 /* =========================================
    06. SHARED IMAGE TILES & STATES
    ========================================= */
-
 .ing-image-wrapper {
     position: relative;
     background-color: #F6F5FA;
@@ -361,29 +319,30 @@
     cursor: pointer;
     flex-shrink: 0;
 }
-
 .ing-image-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 .ing-main {
     width: 60%;
     max-width: 600px;
     height: 400px;
     cursor: default;
 }
-
 .ing-side {
     width: 20%;
     height: 250px;
     opacity: 0.55;
-    transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
 .ing-side:hover { opacity: 0.85; transform: translateY(-2px); }
-
+/* Far slots keep real geometry; visibility is controlled by the carousel slot */
+.ing-far {
+    width: 20%;
+    height: 250px;
+    opacity: 0;
+    pointer-events: none;
+}
 .ing-failed {
     display: flex;
     align-items: center;
@@ -395,14 +354,12 @@
     text-align: center;
     padding: 10px;
 }
-
 .ing-skeleton {
     position: absolute;
     inset: 0;
     background-color: #EEEEEE;
     animation: ing-pulse 1.5s ease-in-out infinite;
 }
-
 @keyframes ing-pulse {
     0% { opacity: 1; }
     50% { opacity: 0.6; }

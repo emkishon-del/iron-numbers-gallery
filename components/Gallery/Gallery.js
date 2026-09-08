@@ -188,7 +188,7 @@ export default function Gallery({
 
       {viewMode === 'carousel' ? (
         <CarouselView
-          key={visibleImages.length}
+          key={`${visibleImages.length}-${sortType}`}
           images={visibleImages}
           onImageClick={setLightboxIndex}
           onImageFail={handleImageFail}

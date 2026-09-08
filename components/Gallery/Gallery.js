@@ -82,21 +82,18 @@ async function fetchImagesFromFolder(folderPath, fileServiceUrl, apiKey) {
         throw new Error(`File service get failed for ${fileName} (${getResponse.status})`);
       }
 
-      const base64 = await getResponse.text(); // התשובה הקיימת היא טקסט base64
+      const data = await getResponse.json();
       const ext = fileName.split('.').pop().toLowerCase();
       const mimeType = MIME_TYPES[ext] || 'application/octet-stream';
+      // data.name, data.content, data.date
 
       return {
-        uid: filePath, // הנתיב המלא הוא זהות קבועה וייחודית
+        uid: filePath,
         id: index + 1,
-        url: `data:${mimeType};base64,${base64}`,
-        name: fileName.replace(/\.[^/.]+$/, ''),
-        alt: fileName,
-        // הערה: ה-API הקיים (/list) לא מחזיר תאריך שינוי קובץ - רק שם.
-        // בלי להוסיף קריאה חדשה ל-File Service, אין לנו מקור אמיתי לתאריך.
-        // ממלאים בזמן הטעינה בפועל כברירת מחדל - מיון לפי תאריך לא ישקף
-        // את התאריך האמיתי של הקובץ עד שיתווסף מקור מידע לכך.
-        date: new Date().toISOString(),
+        url: `data:${mimeType};base64,${data.content}`,
+        name: data.name.replace(/\.[^/.]+$/, ''),
+        alt: data.name,
+        date: data.date,
       };
     })
   );

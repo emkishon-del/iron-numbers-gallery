@@ -5,24 +5,38 @@ import styles from './Gallery.module.css';
 /** Duration for one carousel step (ms). Easy to tune. */
 const TRANSITION_MS = 450;
 
+/**
+ * Relative sizes based on the available track width.
+ * Heights use aspect-ratio so the whole carousel scales with its container.
+ * maxWidth / maxHeight keep the original "normal" size on very large hosts.
+ * No vw / vh.
+ */
 const SIZE_STYLES = {
     main: {
         width: '60%',
         maxWidth: '600px',
-        height: '400px',
+        // 3/2 ≈ original 600×400 proportion
+        aspectRatio: '3 / 2',
+        height: 'auto',
+        maxHeight: '400px',
         opacity: 1,
     },
     side: {
         width: '20%',
-        maxWidth: 'none',
-        height: '250px',
+        maxWidth: '200px',
+        // close to original ~250px height feel
+        aspectRatio: '4 / 5',
+        height: 'auto',
+        maxHeight: '250px',
         opacity: 0.55,
     },
     // Real physical size (not 0) so enter/exit can animate; clipped by overflow:hidden
     far: {
         width: '20%',
-        maxWidth: 'none',
-        height: '250px',
+        maxWidth: '200px',
+        aspectRatio: '4 / 5',
+        height: 'auto',
+        maxHeight: '250px',
         opacity: 0,
     },
 };
@@ -118,34 +132,32 @@ export default function CarouselView({
     }
 
     return (
-        <div>
-            <div className={styles['ing-carousel']} dir="rtl">
-                <button
-                    className={styles['ing-arrow']}
-                    onClick={goNext}
-                    aria-label="תמונה הבאה"
-                    disabled={!hasMultiple || isAnimating}
-                >
-                    ‹
-                </button>
+        <div className={styles['ing-carousel']} dir="rtl">
+            <button
+                className={styles['ing-arrow']}
+                onClick={goNext}
+                aria-label="תמונה הבאה"
+                disabled={!hasMultiple || isAnimating}
+            >
+                ‹
+            </button>
 
-                <div className={styles['ing-track']}>
-                    <FlipRow
-                        slots={slots}
-                        onImageFail={onImageFail}
-                        directionRef={directionRef}
-                    />
-                </div>
-
-                <button
-                    className={styles['ing-arrow']}
-                    onClick={goPrev}
-                    aria-label="תמונה קודמת"
-                    disabled={!hasMultiple || isAnimating}
-                >
-                    ›
-                </button>
+            <div className={styles['ing-track']}>
+                <FlipRow
+                    slots={slots}
+                    onImageFail={onImageFail}
+                    directionRef={directionRef}
+                />
             </div>
+
+            <button
+                className={styles['ing-arrow']}
+                onClick={goPrev}
+                aria-label="תמונה קודמת"
+                disabled={!hasMultiple || isAnimating}
+            >
+                ›
+            </button>
         </div>
     );
 }
@@ -304,7 +316,9 @@ function FlipRow({ slots, onImageFail, directionRef }) {
                         style={{
                             width: box.width,
                             maxWidth: box.maxWidth,
+                            aspectRatio: box.aspectRatio,
                             height: box.height,
+                            maxHeight: box.maxHeight,
                             opacity: box.opacity,
                             flexShrink: 0,
                             overflow: 'hidden',

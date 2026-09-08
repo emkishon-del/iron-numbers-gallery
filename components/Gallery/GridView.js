@@ -30,7 +30,7 @@ export default function GridView({ images = [], onImageClick, onImageFail }) {
   const start = page * PAGE_SIZE;
 
   return (
-    <div>
+    <div style={{ width: '100%', minWidth: 0, minHeight: 0, flex: '1 1 auto', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div className={styles['ing-grid-slider']}>
         {/* dir="rtl" מעמיד את העמוד הבא משמאל, וה-translateX החיובי מביא אותו משמאל למרכז */}
         <div

@@ -13,7 +13,7 @@ const TRANSITION_MS = 450;
  */
 const SIZE_STYLES = {
     main: {
-        width: '60%',
+        width: '48%',
         maxWidth: '600px',
         // 3/2 ≈ original 600×400 proportion
         aspectRatio: '3 / 2',
@@ -23,7 +23,7 @@ const SIZE_STYLES = {
     },
     side: {
         width: '20%',
-        maxWidth: '200px',
+        maxWidth: '1100px',
         // close to original ~250px height feel
         aspectRatio: '4 / 5',
         height: 'auto',

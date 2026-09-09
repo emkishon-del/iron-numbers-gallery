@@ -35,6 +35,7 @@
     gap: clamp(6px, 1.5%, 12px);
     flex-wrap: wrap;
 }
+
 .ing-toolbar-controls {
     display: flex;
     align-items: center;
@@ -42,6 +43,7 @@
     min-width: 0;
     flex-wrap: wrap;
 }
+
 .ing-view-toggle {
     display: flex;
     background-color: #EEEEEE;
@@ -50,6 +52,7 @@
     gap: clamp(2px, 0.5cqw, 4px);
     flex-shrink: 0;
 }
+
 .ing-toggle-btn {
     border: none;
     background: transparent;
@@ -63,10 +66,12 @@
     transition: background-color 0.15s ease, color 0.15s ease;
     white-space: nowrap;
 }
+
 .ing-toggle-btn.ing-active {
     background-color: #0D163A;
     color: #FDFEFD;
 }
+
 .ing-count-label {
     display: flex;
     align-items: center;
@@ -77,6 +82,7 @@
     white-space: nowrap;
     min-width: 0;
 }
+
 .ing-count-label strong {
     font-weight: 500;
 }
@@ -95,10 +101,12 @@
     color: #1E1E1E;
     cursor: pointer;
 }
+
 .ing-sort-dropdown {
     position: relative;
     min-width: 0;
 }
+
 .ing-sort-button {
     display: flex;
     align-items: center;
@@ -115,25 +123,30 @@
     white-space: nowrap;
     max-width: 100%;
 }
+
 .ing-sort-button-label {
     color: #6B6B6B;
     font-weight: 400;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .ing-sort-button-label strong {
     color: #1E1E1E;
     font-weight: 500;
 }
+
 .ing-sort-chevron {
     font-size: clamp(12px, 2.5cqw, 16px);
     color: #6B6B6B;
     transition: transform 0.15s ease;
     line-height: 1;
 }
+
 .ing-sort-chevron-open {
     transform: rotate(180deg);
 }
+
 .ing-sort-menu {
     position: absolute;
     top: calc(100% + 6px);
@@ -148,6 +161,7 @@
     margin: 0;
     z-index: 20;
 }
+
 .ing-sort-option {
     display: block;
     width: 100%;
@@ -162,13 +176,16 @@
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
+
 .ing-sort-option:hover {
     background-color: #F6F5FA;
 }
+
 .ing-sort-option-active {
     background-color: #0D163A;
     color: #FDFEFD;
 }
+
 .ing-sort-option-active:hover {
     background-color: #0D163A;
 }
@@ -245,14 +262,22 @@
     box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
     transition: filter 0.15s ease;
 }
-.ing-arrow:hover:not(:disabled) { filter: brightness(1.15); }
-.ing-arrow:disabled { opacity: 0.3; cursor: default; }
+
+.ing-arrow:hover:not(:disabled) {
+    filter: brightness(1.15);
+}
+
+.ing-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
 
 .ing-dots-viewport {
     overflow: hidden;
     margin: 4px auto 8px;
     max-width: 100%;
 }
+
 .ing-dots-track {
     display: flex;
     align-items: center;
@@ -261,6 +286,7 @@
     width: min(450px, 100%);
     transition: transform 0.25s ease;
 }
+
 .ing-dot {
     width: 8px;
     height: 8px;
@@ -272,6 +298,7 @@
     cursor: pointer;
     transition: width 0.2s ease, background-color 0.2s ease;
 }
+
 .ing-dot-active {
     width: 24px;
     background-color: #047AFF;
@@ -280,14 +307,21 @@
 /* =========================================
    05. GRID & GRID SLIDER
    ========================================= */
+.ing-grid-view {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
 .ing-grid {
     display: grid;
-    /* Always exactly 3 columns → 6 images per page (3×2). Scales with container. */
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* אין יותר grid-template-rows קבוע - הגובה של כל שורה נגזר
+       מ-aspect-ratio של כל תא, לא מגובה שמגיע מלמעלה */
     gap: clamp(6px, 1.5%, 16px);
-    padding: 8px 0 24px;
     width: 100%;
-    max-width: 100%;
+    padding: 8px 0 24px;
     margin: 0 auto;
     min-width: 0;
     box-sizing: border-box;
@@ -295,20 +329,20 @@
 
 .ing-grid-item {
     width: 100%;
-    /* Scale with container, but never exceed the original ~220px height */
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4/3;   /* ← זה מה שמחליף את התלות בגובה ההורה */
     height: auto;
-    max-height: 220px;
+    min-width: 0;
     overflow: hidden;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-    min-width: 0;
 }
+
 .ing-grid-item img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
+
 .ing-grid-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
@@ -319,20 +353,22 @@
     position: relative;
     width: 100%;
     min-width: 0;
-    flex: 1 1 auto;
 }
+
 .ing-grid-track {
     display: flex;
     width: 100%;
     min-width: 0;
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .ing-grid-half {
     flex: 0 0 100%;
-    min-width: 0;
     width: 100%;
+    min-width: 0;
     box-sizing: border-box;
 }
+
 .ing-grid-pagination {
     display: flex;
     align-items: center;
@@ -341,38 +377,6 @@
     padding: 8px 0 4px;
     flex-shrink: 0;
 }
-.ing-page-arrow {
-    background: #0D163A;
-    color: #FDFEFD;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 35px -10px rgba(0, 0, 0, 0.25);
-    transition: filter 0.15s ease;
-}
-.ing-page-arrow:hover:not(:disabled) { filter: brightness(1.15); }
-.ing-page-arrow:disabled { opacity: 0.3; cursor: default; }
-.ing-page-label {
-    font-size: 13px;
-    color: #6B6B6B;
-    font-family: Rubik, sans-serif;
-}
-.ing-grid-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(253, 254, 253, 0.9);
-    color: #6B6B6B;
-    font-size: 12px;
-    font-weight: 400;
-    padding: 4px 8px;
-    text-align: center;
-}
-
 /* =========================================
    06. SHARED IMAGE TILES & STATES
    ========================================= */
@@ -389,6 +393,7 @@
     min-width: 0;
     min-height: 0;
 }
+
 .ing-image-wrapper img {
     width: 100%;
     height: 100%;
@@ -401,12 +406,17 @@
     height: 100%;
     cursor: default;
 }
+
 .ing-side {
     width: 100%;
     height: 100%;
     opacity: 0.55;
 }
-.ing-side:hover { opacity: 0.85; transform: translateY(-2px); }
+
+.ing-side:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
 
 /* Far slots keep real geometry; visibility is controlled by the carousel slot */
 .ing-far {
@@ -427,16 +437,26 @@
     text-align: center;
     padding: 10px;
 }
+
 .ing-skeleton {
     position: absolute;
     inset: 0;
     background-color: #EEEEEE;
     animation: ing-pulse 1.5s ease-in-out infinite;
 }
+
 @keyframes ing-pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.6; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Container-query fallbacks for very narrow hosts (based on component width, not viewport) */
@@ -445,23 +465,28 @@
         gap: 6px;
         padding: 10px 0 8px;
     }
+
     .ing-arrow {
         width: 28px;
         height: 28px;
         font-size: 14px;
     }
+
     .ing-toolbar {
         flex-direction: column-reverse;
         align-items: stretch;
         gap: 8px;
     }
+
     .ing-toolbar-controls {
         justify-content: space-between;
         width: 100%;
     }
+
     .ing-count-label {
         justify-content: center;
     }
+
     .ing-grid {
         gap: 6px;
     }

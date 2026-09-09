@@ -30,9 +30,8 @@ export default function GridView({ images = [], onImageClick, onImageFail }) {
   const start = page * PAGE_SIZE;
 
   return (
-    <div style={{ width: '100%', minWidth: 0, minHeight: 0, flex: '1 1 auto', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div className={styles['ing-grid-view']}>
       <div className={styles['ing-grid-slider']}>
-        {/* dir="rtl" מעמיד את העמוד הבא משמאל, וה-translateX החיובי מביא אותו משמאל למרכז */}
         <div
           className={styles['ing-grid-track']}
           dir="rtl"
@@ -58,7 +57,6 @@ export default function GridView({ images = [], onImageClick, onImageFail }) {
 
       {totalPages > 1 && (
         <div className={styles['ing-grid-pagination']} dir="rtl">
-          {/* כפתור ימין (→): מנוטרל בעמוד הראשון (0), מחזיר אחורה לעמוד הקודם */}
           <button
             className={styles['ing-page-arrow']}
             onClick={goPrevPage}
@@ -72,7 +70,6 @@ export default function GridView({ images = [], onImageClick, onImageFail }) {
             {start + 1}-{Math.min(start + PAGE_SIZE, images.length)} מתוך {images.length}
           </span>
 
-          {/* כפתור שמאל (←): פעיל בעמוד הראשון, מעביר קדימה לעמוד הבא משמאל */}
           <button
             className={styles['ing-page-arrow']}
             onClick={goNextPage}

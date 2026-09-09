@@ -11,8 +11,6 @@ const FOLDER_PATH = 'C:\\Users\\user\\iron-numbers-gallery\\public\\pic'; // ע�
 export default function GalleryTestPage() {
   return (
     <div style={{ padding: 20, direction: 'rtl' }}>
-      <h1>בדיקת גלריה - קרוסלה + גריד</h1>
-
       <Gallery
         folderPath={FOLDER_PATH}
         fileServiceUrl={FILE_SERVICE_URL}

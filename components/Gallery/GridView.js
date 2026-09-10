@@ -27,59 +27,57 @@ export default function GridView({ images = [], onImageClick, onImageFail }) {
   const goNextPage = () => setPage((prev) => Math.min(prev + 1, totalPages - 1));
   const goPrevPage = () => setPage((prev) => Math.max(prev - 1, 0));
 
-  const start = page * PAGE_SIZE;
-
   return (
     <div className={styles['ing-grid-view']}>
-      <div className={styles['ing-grid-slider']}>
-        <div
-          className={styles['ing-grid-track']}
-          dir="rtl"
-          style={{ transform: `translateX(${page * 100}%)` }}
-        >
-          {Array.from({ length: totalPages }, (_, pageIndex) => (
-            <div key={pageIndex} className={styles['ing-grid-half']}>
-              <div className={styles['ing-grid']} dir="rtl">
-                {getPageImages(pageIndex).map((image) => (
-                  <GalleryImage
-                    key={image.uid}
-                    image={image}
-                    size="grid"
-                    onClick={() => onImageClick(images.findIndex((img) => img.uid === image.uid))}
-                    onFail={onImageFail}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {totalPages > 1 && (
-        <div className={styles['ing-grid-pagination']} dir="rtl">
+      <div className={styles['ing-grid-nav-row']} dir="rtl">
+        {totalPages > 1 && (
           <button
-            className={styles['ing-page-arrow']}
-            onClick={goPrevPage}
-            disabled={page === 0}
-            aria-label="הקודמות"
-          >
-            →
-          </button>
-
-          <span className={styles['ing-page-label']}>
-            {start + 1}-{Math.min(start + PAGE_SIZE, images.length)} מתוך {images.length}
-          </span>
-
-          <button
-            className={styles['ing-page-arrow']}
+           className={styles['ing-page-arrow']}
             onClick={goNextPage}
             disabled={page === totalPages - 1}
             aria-label="הבאות"
           >
-            ←
+            ‹
           </button>
+        )}
+
+        <div className={styles['ing-grid-slider']}>
+          <div
+            className={styles['ing-grid-track']}
+            dir="rtl"
+            style={{ transform: `translateX(${page * 100}%)` }}
+          >
+            {Array.from({ length: totalPages }, (_, pageIndex) => (
+              <div key={pageIndex} className={styles['ing-grid-half']}>
+                <div className={styles['ing-grid']} dir="rtl">
+                  {getPageImages(pageIndex).map((image) => (
+                    <GalleryImage
+                      key={image.uid}
+                      image={image}
+                      size="grid"
+                      onClick={() => onImageClick(images.findIndex((img) => img.uid === image.uid))}
+                      onFail={onImageFail}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+
+        {totalPages > 1 && (
+          <button
+         
+                className={styles['ing-page-arrow']}
+            onClick={goPrevPage}
+            disabled={page === 0}
+            aria-label="הקודמות"
+          >
+            ›
+           
+          </button>
+        )}
+      </div>
     </div>
   );
 }

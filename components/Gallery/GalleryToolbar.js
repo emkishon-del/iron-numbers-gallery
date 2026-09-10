@@ -33,8 +33,8 @@ export default function GalleryToolbar({ viewMode, onViewModeChange, imageCount,
                         }
                         onClick={() => onViewModeChange('grid')}
                     >
-                        גריד
-                    </button>
+                        רשת
+                                            </button>
                 </div>
 
                 <SortDropdown sortType={sortType} onSortChange={onSortChange} />

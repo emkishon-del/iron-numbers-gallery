@@ -108,8 +108,7 @@ export default function Gallery({
   images: imagesProp = [],
   // === שלושת ה-props החדשים בלבד - שאר הקומפוננטה לא השתנתה ===
   folderPath,
-  fileServiceUrl,
-  fileServiceApiKey,
+ fileServiceUrl: fileServiceUrl='http://localhost:3001',fileServiceApiKey='your-api-key-here'
 }) {
   const [viewMode, setViewMode] = useState('carousel'); // 'carousel' | 'grid'
   const [sortType, setSortType] = useState('date-desc');

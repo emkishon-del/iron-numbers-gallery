@@ -13,8 +13,6 @@ export default function GalleryTestPage() {
     <div style={{ padding: 20, direction: 'rtl' }}>
       <Gallery
         folderPath={FOLDER_PATH}
-        fileServiceUrl={FILE_SERVICE_URL}
-        fileServiceApiKey={FILE_SERVICE_API_KEY}
       />
     </div>
   );

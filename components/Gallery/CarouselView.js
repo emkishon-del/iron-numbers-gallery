@@ -80,7 +80,7 @@ export default function CarouselView({
 
         animTimerRef.current = setTimeout(
             finishAnimation,
-            TRANSITION_MS + 50
+            TRANSITION_MS - 50
         );
     }, [finishAnimation]);
 
